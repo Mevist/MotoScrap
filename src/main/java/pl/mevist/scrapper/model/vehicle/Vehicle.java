@@ -24,4 +24,13 @@ public class Vehicle {
     public VehicleDetails getDetails() {
         return details;
     }
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", details=" + details +
+                '}';
+    }
 }

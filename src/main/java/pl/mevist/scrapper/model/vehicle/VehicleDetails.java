@@ -1,16 +1,16 @@
 package pl.mevist.scrapper.model.vehicle;
 
-import java.util.List;
+import java.time.YearMonth;
 
 public class VehicleDetails {
         private final Float mileage;
         private final String transmission;
-        private final Float firstRegister;
+        private final YearMonth firstRegister;
         private final String gasPump;
         private final String speedoMeter;
 
         // Constructor
-        private VehicleDetails(Float mileage, String transmission, Float firstRegister, String gasPump, String speedoMeter) {
+        private VehicleDetails(Float mileage, String transmission, YearMonth firstRegister, String gasPump, String speedoMeter) {
                 this.mileage = mileage;
                 this.transmission = transmission;
                 this.firstRegister = firstRegister;
@@ -22,27 +22,27 @@ public class VehicleDetails {
         public static class Builder {
                 private Float mileage;
                 private String transmission;
-                private Float firstRegister;
+                private YearMonth firstRegister;
                 private String gasPump;
                 private String speedoMeter;
 
-                private Builder setMileage(Float mileage) {
+                public Builder setMileage(Float mileage) {
                         this.mileage = mileage;
                         return this;
                 }
-                private Builder setTransmission(String transmission) {
+                public Builder setTransmission(String transmission) {
                         this.transmission = transmission;
                         return this;
                 }
-                private Builder setFirstRegister(Float firstRegister) {
+                public Builder setFirstRegister(YearMonth firstRegister) {
                         this.firstRegister = firstRegister;
                         return this;
                 }
-                private Builder setGasPump(String gasPump) {
+                public Builder setGasPump(String gasPump) {
                         this.gasPump = gasPump;
                         return this;
                 }
-                private Builder setSpeedoMeter(String speedoMeter) {
+                public Builder setSpeedoMeter(String speedoMeter) {
                         this.speedoMeter = speedoMeter;
                         return this;
                 }
@@ -62,7 +62,7 @@ public class VehicleDetails {
                 return transmission;
         }
 
-        public Float getFirstRegister() {
+        public YearMonth getFirstRegister() {
                 return firstRegister;
         }
 
@@ -72,5 +72,16 @@ public class VehicleDetails {
 
         public String getSpeedoMeter() {
                 return speedoMeter;
+        }
+
+        @Override
+        public String toString() {
+                return "VehicleDetails{" +
+                        "mileage=" + mileage +
+                        ", transmission='" + transmission + '\'' +
+                        ", firstRegister=" + firstRegister +
+                        ", gasPump='" + gasPump + '\'' +
+                        ", speedoMeter='" + speedoMeter + '\'' +
+                        '}';
         }
 }
