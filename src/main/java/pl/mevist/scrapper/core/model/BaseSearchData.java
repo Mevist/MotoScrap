@@ -1,6 +1,6 @@
-package pl.mevist.scrapper.soupData;
+package pl.mevist.scrapper.core.model;
 
-public class Search {
+public class BaseSearchData {
     private final String brand;
     private final String model;
     private final Integer maxYear;
@@ -8,7 +8,7 @@ public class Search {
     private final Float maxPrice;
 
     // Constructor
-    private Search(String brand, String model, Integer maxYear, Float maxMileage, Float maxPrice) {
+    public BaseSearchData(String brand, String model, Integer maxYear, Float maxMileage, Float maxPrice) {
         this.brand = brand;
         this.model = model;
         this.maxYear = maxYear;
@@ -45,8 +45,8 @@ public class Search {
             return this;
         }
 
-        public Search build() {
-            return new Search(brand, model, maxYear, maxMileage, maxPrice);
+        public BaseSearchData build() {
+            return new BaseSearchData(brand, model, maxYear, maxMileage, maxPrice);
         }
     }
 

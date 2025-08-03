@@ -1,8 +1,8 @@
-package pl.mevist.scrapper.model.vehicle;
+package pl.mevist.scrapper.core.model;
 
 import java.time.YearMonth;
 
-public class VehicleDetails {
+public class BaseVehicleDetails {
         private final Float mileage;
         private final String transmission;
         private final YearMonth firstRegister;
@@ -10,7 +10,7 @@ public class VehicleDetails {
         private final String speedoMeter;
 
         // Constructor
-        private VehicleDetails(Float mileage, String transmission, YearMonth firstRegister, String gasPump, String speedoMeter) {
+        private BaseVehicleDetails(Float mileage, String transmission, YearMonth firstRegister, String gasPump, String speedoMeter) {
                 this.mileage = mileage;
                 this.transmission = transmission;
                 this.firstRegister = firstRegister;
@@ -47,8 +47,8 @@ public class VehicleDetails {
                         return this;
                 }
 
-                public VehicleDetails build() {
-                        return new VehicleDetails(mileage, transmission, firstRegister, gasPump, speedoMeter);
+                public BaseVehicleDetails build() {
+                        return new BaseVehicleDetails(mileage, transmission, firstRegister, gasPump, speedoMeter);
                 }
         }
 

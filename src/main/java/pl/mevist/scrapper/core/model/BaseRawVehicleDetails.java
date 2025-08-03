@@ -1,13 +1,11 @@
-package pl.mevist.scrapper.model.vehicle;
+package pl.mevist.scrapper.core.model;
 
-public class RawVehicleDetails {
+public class BaseRawVehicleDetails {
     private String transmission;
     private String mileage;
     private String firstRegister;
     private String gasPump;
     private String speedoMeter;
-
-    // Temp
 
 
     @Override

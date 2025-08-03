@@ -1,4 +1,4 @@
-package pl.mevist.scrapper.model.vehicle;
+package pl.mevist.scrapper.core.model;
 
 
 import java.util.AbstractMap.SimpleEntry;
@@ -9,20 +9,20 @@ import java.util.regex.Pattern;
 
 // TODO:
 //  This could be usefull later, for know its bit overcompliacting things. Just take simple String and save it.
-public class SpeedoMeter {
+public class BaseSpeedoMeter {
     private float kw;
     private float hp;
 
     public static final float KW_TO_HP_CONST = 1.341f;
     public static final float HP_TO_KW_CONST = 0.7457f;
 
-    public SpeedoMeter fromHp(float hp) {
+    public BaseSpeedoMeter fromHp(float hp) {
         this.hp = hp;
         this.kw =  hp * KW_TO_HP_CONST;
         return this;
     }
 
-    public SpeedoMeter fromKw(float kw) {
+    public BaseSpeedoMeter fromKw(float kw) {
         this.kw = kw;
         this.hp = kw * HP_TO_KW_CONST;
         return this;
