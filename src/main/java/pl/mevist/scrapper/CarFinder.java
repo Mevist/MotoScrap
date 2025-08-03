@@ -15,7 +15,7 @@ public class CarFinder implements Runnable{
     @Override
     public void run() {
         for (AbstractScrapper scrapper : scrappers) {
-            scrapper.process();
+            scrapper.processAll();
         }
     }
 }

@@ -15,6 +15,7 @@ public abstract class AbstractVehicleMapper {
 
     // Provided
     public BaseVehicleDetails toVehicleDetails(BaseRawVehicleDetails rawDetails) {
+        System.out.println("Sanitizing vehicle details" + rawDetails);
         Float mileage = sanitizeMileage(rawDetails.getMileage());
         YearMonth registerDate = sanitizeFirstRegister(rawDetails.getFirstRegister());
         String gasPump = sanitizeGasPump(rawDetails.getGasPump());

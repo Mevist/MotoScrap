@@ -15,8 +15,8 @@ public class AutoScoutSearch extends AbstractSearch {
     }
 
     @Override
-    protected String buildSearchUrl() {
-        StringBuilder url = new StringBuilder(URL);
+    protected String buildSearchUrl(int page) {
+        StringBuilder url = new StringBuilder(URL).append("?page=").append(page);
 
         return this.buildUrlParams(url);
     }

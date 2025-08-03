@@ -6,8 +6,11 @@ import pl.mevist.scrapper.core.model.BaseSearchData;
 public abstract class AbstractSearch {
     private final BaseSearchData baseSearchData;
 
+    private int maxPage;
+    private int page;
+
     // Abstract
-    protected abstract String buildSearchUrl();
+    protected abstract String buildSearchUrl(int page);
     protected abstract String buildUrlParams(StringBuilder baseUrl);
 
     // Constructor
@@ -18,5 +21,21 @@ public abstract class AbstractSearch {
     // Getters, Setters
     public BaseSearchData getBaseSearch() {
         return baseSearchData;
+    }
+
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    public void setMaxPage(int maxPage) {
+        this.maxPage = maxPage;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
 }

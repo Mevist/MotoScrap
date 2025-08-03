@@ -4,10 +4,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import pl.mevist.scrapper.core.model.BaseRawVehicleDetails;
 import pl.mevist.scrapper.core.model.BaseVehicle;
 import pl.mevist.scrapper.core.model.BaseVehicleDetails;
-import pl.mevist.scrapper.utils.QueryUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,10 +23,16 @@ public abstract class AbstractScrapper {
     protected abstract BaseVehicleDetails parseVehicleDetails(Element element);
     protected abstract BaseVehicle parseVehicleName(Element element);
 
+    protected abstract int findMaxPageIndex(Document doc);
+
     // Provided
-    protected Document getBaseDocument() throws IOException {
-        String searchUrl = search.buildSearchUrl();
+    protected Document getBaseDocument(int page) throws IOException {
+        String searchUrl = search.buildSearchUrl(page);
         return Jsoup.connect(searchUrl).userAgent(USER_AGENT).get();
+    }
+
+    protected Document getFirstDocumentPage() throws IOException {
+        return getBaseDocument(1);
     }
 
     protected BaseVehicle parseVehicle(Element element) {
@@ -38,9 +42,25 @@ public abstract class AbstractScrapper {
         return vehicle;
     }
 
-    public final void process() {
+    public final void processAll(){
         try {
-            Document document = getBaseDocument();
+            Document document = getFirstDocumentPage();
+            search.setMaxPage(findMaxPageIndex(document));
+
+            for(int page = 1; page <= search.getMaxPage(); page++){
+                search.setPage(page);
+                processPage(search.getPage());
+            }
+
+            System.out.println("Found " + vehicles.size() + " vehicles" + "after processing " + search.getMaxPage() + " pages");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public final void processPage(int page) {
+        try {
+            Document document = getBaseDocument(page);
             Elements elements = getElementsInPage(document);
 
             System.out.println(elements.size());

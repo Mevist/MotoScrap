@@ -76,4 +76,11 @@ public class AutoScoutScrapper extends AbstractScrapper {
         String model = listSpans.get(1);
         return new BaseVehicle(brand, model);
     }
+
+    @Override
+    protected int findMaxPageIndex(Document doc) {
+        Element element = doc.selectFirst("li.pagination-item--page-indicator span");
+        String[] indicatorParts = element.text().split("/");
+        return Integer.parseInt(indicatorParts[1].trim());
+    }
 }
