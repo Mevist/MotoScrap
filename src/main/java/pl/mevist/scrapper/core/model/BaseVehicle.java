@@ -17,6 +17,15 @@ public class BaseVehicle {
         this.model = model;
     }
 
+    // Methods
+    public boolean isValid(){
+        return brand != null &&
+                model != null &&
+                details != null &&
+                details.isValid();
+    }
+
+
     // Getters, Setters
     public String getBrand() {
         return brand;

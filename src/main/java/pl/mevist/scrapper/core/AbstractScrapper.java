@@ -4,6 +4,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.mevist.scrapper.core.model.BaseVehicle;
 import pl.mevist.scrapper.core.model.BaseVehicleDetails;
 
@@ -12,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractScrapper {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     protected AbstractSearch search;
     protected AbstractVehicleMapper vehicleMapper;
 
@@ -52,7 +56,7 @@ public abstract class AbstractScrapper {
                 processPage(search.getPage());
             }
 
-            System.out.println("Found " + vehicles.size() + " vehicles" + "after processing " + search.getMaxPage() + " pages");
+            logger.debug("Found " + vehicles.size() + " vehicles" + "after processing " + search.getMaxPage() + " pages");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -63,13 +67,13 @@ public abstract class AbstractScrapper {
             Document document = getBaseDocument(page);
             Elements elements = getElementsInPage(document);
 
-            System.out.println(elements.size());
+            logger.debug(String.valueOf(elements.size()));
             Integer count = 1;
             for (Element element : elements) {
-                System.out.println("Processing element: " + count + "/" + elements.size());
+                logger.debug("Processing element: " + count + "/" + elements.size());
                 BaseVehicle vehicle = parseVehicle(element);
-                System.out.println(vehicle);
-                if (vehicle != null) {
+                logger.debug(vehicle.toString());
+                if (vehicle.isValid()) {
                     vehicles.add(vehicle);
                 }
                 count++;
@@ -85,6 +89,14 @@ public abstract class AbstractScrapper {
     protected void saveIntoFile(){
         // TODO
         //  Use vehicles to store data into external file
+    }
+
+    protected void logParseError(Elements htmlContext, Exception e) {
+        StringBuilder builder = new StringBuilder();
+
+        htmlContext.stream().map(Element::text).forEach(builder::append);
+
+        logger.warn("Failed to sanitize raw data. Html context: '{}'", builder, e);
     }
 
     // Constructors

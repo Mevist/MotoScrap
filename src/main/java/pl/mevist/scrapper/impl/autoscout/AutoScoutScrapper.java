@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import pl.mevist.scrapper.core.AbstractScrapper;
 import pl.mevist.scrapper.core.AbstractSearch;
 import pl.mevist.scrapper.core.AbstractVehicleMapper;
+import pl.mevist.scrapper.core.exception.VehicleMappingException;
 import pl.mevist.scrapper.core.model.BaseRawVehicleDetails;
 import pl.mevist.scrapper.core.model.BaseVehicle;
 import pl.mevist.scrapper.core.model.BaseVehicleDetails;
@@ -61,7 +62,12 @@ public class AutoScoutScrapper extends AbstractScrapper {
                 }
             }
         }
-        return vehicleMapper.toVehicleDetails(rawDetails);
+        try {
+            return vehicleMapper.toVehicleDetails(rawDetails);
+        } catch (VehicleMappingException e) {
+            logParseError(details, e);
+        }
+        return null;
     }
 
     @Override

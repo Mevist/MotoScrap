@@ -9,6 +9,14 @@ public class BaseVehicleDetails {
         private final String gasPump;
         private final String speedoMeter;
 
+        public boolean isValid(){
+                return mileage != null &&
+                        transmission != null &&
+                        firstRegister != null &&
+                        gasPump != null &&
+                        speedoMeter != null;
+        }
+
         // Constructor
         private BaseVehicleDetails(Float mileage, String transmission, YearMonth firstRegister, String gasPump, String speedoMeter) {
                 this.mileage = mileage;

@@ -1,6 +1,7 @@
 package pl.mevist.scrapper.impl.autoscout;
 
 import pl.mevist.scrapper.core.AbstractVehicleMapper;
+import pl.mevist.scrapper.core.exception.VehicleMappingException;
 import pl.mevist.scrapper.core.model.BaseRawVehicleDetails;
 import pl.mevist.scrapper.core.model.BaseVehicleDetails;
 
@@ -19,15 +20,23 @@ public class AutoScoutVehicleMapper extends AbstractVehicleMapper {
     private final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/yyyy");
 
     @Override
-    protected Float sanitizeMileage(String mileage) {
-        String rawMileage = mileage.replaceAll("[^\\d.]", "");
-        return Float.parseFloat(rawMileage);
+    protected Float sanitizeMileage(String mileage) throws VehicleMappingException {
+        try {
+            String rawMileage = mileage.replaceAll("[^\\d.]", "");
+            return Float.parseFloat(rawMileage);
+        } catch (NumberFormatException e) {
+            throw new VehicleMappingException("Failed to parse mileage to integer from: " + mileage, e);
+        }
     }
 
     @Override
-    protected YearMonth sanitizeFirstRegister(String firstRegister) {
-        String registerCleared = firstRegister.replaceAll("[^\\d.]", "");
-        return YearMonth.parse(firstRegister, dateFormat);
+    protected YearMonth sanitizeFirstRegister(String firstRegister) throws VehicleMappingException {
+        try {
+            String registerCleared = firstRegister.replaceAll("[^\\d.]", "");
+            return YearMonth.parse(firstRegister, dateFormat);
+        } catch (Exception e) {
+            throw new VehicleMappingException("Failed to parse firstRegister date from: " + firstRegister, e);
+        }
     }
 
     @Override
