@@ -21,6 +21,10 @@ public class AutoScoutVehicleMapper extends AbstractVehicleMapper {
 
     @Override
     protected Float sanitizeMileage(String mileage) throws VehicleMappingException {
+        if (mileage == null || !mileage.matches(".*\\d.*")) {
+            return null;
+        }
+
         try {
             String rawMileage = mileage.replaceAll("[^\\d.]", "");
             return Float.parseFloat(rawMileage);
@@ -31,11 +35,15 @@ public class AutoScoutVehicleMapper extends AbstractVehicleMapper {
 
     @Override
     protected YearMonth sanitizeFirstRegister(String firstRegister) throws VehicleMappingException {
+        if (firstRegister == null || !firstRegister.matches(".*\\d.*")) {
+            return null;
+        }
+
         try {
-            String registerCleared = firstRegister.replaceAll("[^\\d.]", "");
             return YearMonth.parse(firstRegister, dateFormat);
         } catch (Exception e) {
-            throw new VehicleMappingException("Failed to parse firstRegister date from: " + firstRegister, e);
+            throw new VehicleMappingException("Failed to parse firstRegister raw date: " + firstRegister, e);
+
         }
     }
 

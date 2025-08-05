@@ -7,7 +7,7 @@ import pl.mevist.scrapper.core.model.BaseSearchData;
 import java.util.Optional;
 
 public class AutoScoutSearch extends AbstractSearch {
-    private static final String URL = "https://www.autoscout24.pl/lst/";
+    static final String URL = "https://www.autoscout24.pl";
 
     public AutoScoutSearch(BaseSearchData baseSearchData) {
         super(baseSearchData);
@@ -16,8 +16,7 @@ public class AutoScoutSearch extends AbstractSearch {
 
     @Override
     protected String buildSearchUrl(int page) {
-        StringBuilder url = new StringBuilder(URL).append("?page=").append(page);
-
+        StringBuilder url = new StringBuilder(URL).append("/lst/").append("?page=").append(page);
         return this.buildUrlParams(url);
     }
 

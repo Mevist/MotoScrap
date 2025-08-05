@@ -2,6 +2,7 @@ package pl.mevist;
 
 import pl.mevist.scrapper.CarFinder;
 import pl.mevist.scrapper.core.model.BaseSearchData;
+import pl.mevist.scrapper.impl.autoscout.AutoScoutPriceMapper;
 import pl.mevist.scrapper.impl.autoscout.AutoScoutScrapper;
 import pl.mevist.scrapper.impl.autoscout.AutoScoutSearch;
 import pl.mevist.scrapper.impl.autoscout.AutoScoutVehicleMapper;
@@ -15,7 +16,12 @@ public class Main{
 
         AutoScoutSearch autoScoutSearch = new AutoScoutSearch(search);
         AutoScoutVehicleMapper autoScoutVehicleMapper = new AutoScoutVehicleMapper();
-        AutoScoutScrapper autoScoutScrapper = new AutoScoutScrapper(autoScoutSearch, autoScoutVehicleMapper);
+        AutoScoutPriceMapper autoScoutPriceMapper = new AutoScoutPriceMapper();
+
+        AutoScoutScrapper autoScoutScrapper = new AutoScoutScrapper(
+                autoScoutSearch,
+                autoScoutVehicleMapper,
+                autoScoutPriceMapper);
 
         CarFinder test = new CarFinder(List.of(autoScoutScrapper));
         try {

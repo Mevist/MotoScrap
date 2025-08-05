@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.mevist.scrapper.core.model.BaseOffer;
 import pl.mevist.scrapper.core.model.BaseVehicle;
 import pl.mevist.scrapper.core.model.BaseVehicleDetails;
 
@@ -18,12 +19,15 @@ public abstract class AbstractScrapper {
 
     protected AbstractSearch search;
     protected AbstractVehicleMapper vehicleMapper;
+    protected AbstractPriceMapper priceMapper;
 
-    protected final String USER_AGENT = "Mozilla/5.0";
-    protected List<BaseVehicle> vehicles = new ArrayList<>();
+    private final String USER_AGENT = "Mozilla/5.0";
+    private final List<BaseOffer> offers = new ArrayList<>();
+    private final List<BaseVehicle> vehicles = new ArrayList<>();
 
     // Abstract
     protected abstract Elements getElementsInPage(Document doc);
+    protected abstract BaseOffer parseOffer(Element element);
     protected abstract BaseVehicleDetails parseVehicleDetails(Element element);
     protected abstract BaseVehicle parseVehicleName(Element element);
 
@@ -56,7 +60,7 @@ public abstract class AbstractScrapper {
                 processPage(search.getPage());
             }
 
-            logger.debug("Found " + vehicles.size() + " vehicles" + "after processing " + search.getMaxPage() + " pages");
+            logger.debug("Found {} offers after processing {} pages", offers.size(), search.getMaxPage());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -71,10 +75,19 @@ public abstract class AbstractScrapper {
             Integer count = 1;
             for (Element element : elements) {
                 logger.debug("Processing element: " + count + "/" + elements.size());
+
+                //TODO
+                // refactor this part so that there will be provided link in case of error
+                BaseOffer offer = parseOffer(element);
+                logger.debug(offer.toString());
                 BaseVehicle vehicle = parseVehicle(element);
+
+                offer.setVehicle(vehicle);
+
                 logger.debug(vehicle.toString());
-                if (vehicle.isValid()) {
-                    vehicles.add(vehicle);
+                logger.debug("End of processing element: {}/{}", count, elements.size());
+                if (offer.isValid()) {
+                    offers.add(offer);
                 }
                 count++;
             }
@@ -88,12 +101,11 @@ public abstract class AbstractScrapper {
 
     protected void saveIntoFile(){
         // TODO
-        //  Use vehicles to store data into external file
+        //  Use offers to store data into external file
     }
 
     protected void logParseError(Elements htmlContext, Exception e) {
         StringBuilder builder = new StringBuilder();
-
         htmlContext.stream().map(Element::text).forEach(builder::append);
 
         logger.warn("Failed to sanitize raw data. Html context: '{}'", builder, e);

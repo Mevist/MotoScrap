@@ -12,7 +12,6 @@ public class BaseVehicleDetails {
         public boolean isValid(){
                 return mileage != null &&
                         transmission != null &&
-                        firstRegister != null &&
                         gasPump != null &&
                         speedoMeter != null;
         }

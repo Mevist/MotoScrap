@@ -4,12 +4,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.mevist.scrapper.core.AbstractScrapper;
-import pl.mevist.scrapper.core.AbstractSearch;
-import pl.mevist.scrapper.core.AbstractVehicleMapper;
 import pl.mevist.scrapper.core.exception.VehicleMappingException;
-import pl.mevist.scrapper.core.model.BaseRawVehicleDetails;
-import pl.mevist.scrapper.core.model.BaseVehicle;
-import pl.mevist.scrapper.core.model.BaseVehicleDetails;
+import pl.mevist.scrapper.core.model.*;
 import pl.mevist.scrapper.utils.QueryUtils;
 
 import java.util.List;
@@ -26,9 +22,10 @@ public class AutoScoutScrapper extends AbstractScrapper {
 
     public static final String DETAIL_FIELD_IDENTIFIER = "data-testid";
 
-    public AutoScoutScrapper(AbstractSearch search, AbstractVehicleMapper  vehicleMapper) {
+    public AutoScoutScrapper(AutoScoutSearch search, AutoScoutVehicleMapper  vehicleMapper, AutoScoutPriceMapper priceMapper) {
         super(search);
         this.vehicleMapper = vehicleMapper;
+        this.priceMapper = priceMapper;
     }
 
     @Override
@@ -38,6 +35,16 @@ public class AutoScoutScrapper extends AbstractScrapper {
                         "article",
                         "class",
                         "cldt-summary-full-item listing-impressions-tracking"));
+    }
+
+    @Override
+    protected BaseOffer parseOffer(Element article) {
+        String link = findRawLink(article);
+        String rawPrice = findRawPrice(article);
+
+        Price price = priceMapper.toPrice(rawPrice);
+
+        return new BaseOffer(AutoScoutSearch.URL + link, price);
     }
 
     @Override
@@ -88,5 +95,15 @@ public class AutoScoutScrapper extends AbstractScrapper {
         Element element = doc.selectFirst("li.pagination-item--page-indicator span");
         String[] indicatorParts = element.text().split("/");
         return Integer.parseInt(indicatorParts[1].trim());
+    }
+
+    private String findRawLink(Element article) {
+        Element hRefElement = article.selectFirst("a[hRef]");
+        return hRefElement.attribute("href").getValue();
+    }
+
+    private String findRawPrice(Element article) {
+        Element priceElement = article.selectFirst(QueryUtils.cssQueryBuilder("p", "class", "Price_price__"));
+        return priceElement.text();
     }
 }
