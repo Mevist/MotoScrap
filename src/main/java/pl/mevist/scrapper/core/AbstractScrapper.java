@@ -6,9 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.mevist.scrapper.core.model.BaseOffer;
-import pl.mevist.scrapper.core.model.BaseVehicle;
-import pl.mevist.scrapper.core.model.BaseVehicleDetails;
+import pl.mevist.scrapper.core.model.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,9 +19,13 @@ public abstract class AbstractScrapper {
     protected AbstractVehicleMapper vehicleMapper;
     protected AbstractPriceMapper priceMapper;
 
+    protected final List<UnparsedVehicleError> failedVehicles = new ArrayList<>();
+    protected final List<BaseOffer> invalidOffers = new ArrayList<>();
+
     private final String USER_AGENT = "Mozilla/5.0";
     private final List<BaseOffer> offers = new ArrayList<>();
     private final List<BaseVehicle> vehicles = new ArrayList<>();
+
 
     // Abstract
     protected abstract Elements getElementsInPage(Document doc);
@@ -63,6 +65,9 @@ public abstract class AbstractScrapper {
             logger.debug("Found {} offers after processing {} pages", offers.size(), search.getMaxPage());
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }finally {
+            failedVehicleParsingLogging();
+            invalidOfferParsingLogging();
         }
     }
 
@@ -88,6 +93,8 @@ public abstract class AbstractScrapper {
                 logger.debug("End of processing element: {}/{}", count, elements.size());
                 if (offer.isValid()) {
                     offers.add(offer);
+                }else{
+                    invalidOffers.add(offer);
                 }
                 count++;
             }
@@ -99,16 +106,43 @@ public abstract class AbstractScrapper {
         }
     }
 
-    protected void saveIntoFile(){
-        // TODO
-        //  Use offers to store data into external file
-    }
-
-    protected void logParseError(Elements htmlContext, Exception e) {
+    protected void logParseError(Elements htmlContext, BaseRawVehicleDetails rawDetails, Exception e) {
         StringBuilder builder = new StringBuilder();
         htmlContext.stream().map(Element::text).forEach(builder::append);
-
+        failedVehicles.add(new UnparsedVehicleError(rawDetails, e.getMessage(), e));
         logger.warn("Failed to sanitize raw data. Html context: '{}'", builder, e);
+    }
+
+    // Private
+    private void failedVehicleParsingLogging() {
+        StringBuilder error = new StringBuilder();
+        if (!failedVehicles.isEmpty()) {
+            error.append("------- Failed Vehicles -------\n");
+            failedVehicles.forEach(failedVehicle -> {
+                error.append("-------START-------\n")
+                        .append(failedVehicle.toString())
+                        .append("\n-------END-------\n\n");
+            });
+            logger.warn(error.toString());
+        }
+    }
+
+    private void invalidOfferParsingLogging() {
+        StringBuilder error = new StringBuilder();
+        if (!invalidOffers.isEmpty()) {
+            error.append("------- Invalid Offers -------\n");
+            invalidOffers.forEach(invalidOffer -> {
+                error.append("-------START-------\n")
+                        .append(invalidOffer.toString())
+                        .append("\n-------END-------\n\n");
+            });
+            logger.warn(error.toString());
+        }
+    }
+
+    private void saveIntoFile(){
+        // TODO
+        //  Use offers to store data into external file
     }
 
     // Constructors

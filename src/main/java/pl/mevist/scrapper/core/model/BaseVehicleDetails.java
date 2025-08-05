@@ -10,8 +10,7 @@ public class BaseVehicleDetails {
         private final String speedoMeter;
 
         public boolean isValid(){
-                return mileage != null &&
-                        transmission != null &&
+                return transmission != null &&
                         gasPump != null &&
                         speedoMeter != null;
         }

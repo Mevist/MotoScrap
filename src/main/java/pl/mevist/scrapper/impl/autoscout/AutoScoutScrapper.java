@@ -72,7 +72,7 @@ public class AutoScoutScrapper extends AbstractScrapper {
         try {
             return vehicleMapper.toVehicleDetails(rawDetails);
         } catch (VehicleMappingException e) {
-            logParseError(details, e);
+            logParseError(details, rawDetails, e);
         }
         return null;
     }
