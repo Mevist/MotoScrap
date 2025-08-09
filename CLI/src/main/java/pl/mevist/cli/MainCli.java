@@ -3,7 +3,6 @@ package pl.mevist.cli;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import pl.mevist.scrapper.CarFinder;
 import pl.mevist.scrapper.Scrapper;
 import pl.mevist.scrapper.core.AbstractScrapper;
 import pl.mevist.scrapper.core.model.BaseSearchData;
@@ -62,9 +61,9 @@ public class MainCli implements Callable<Integer> {
         if (baseSearchData == null) return 2;
 
         List<AbstractScrapper> scrappers = prepareScrappers(baseSearchData);
-        CarFinder carFinder = new CarFinder(scrappers);
-
-        carFinder.run();
+        for (AbstractScrapper scrapper : scrappers) {
+            scrapper.processAll();
+        }
 
         return 0; // success
     }
