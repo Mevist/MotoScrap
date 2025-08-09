@@ -23,6 +23,7 @@ public abstract class AbstractScrapper {
     protected final List<BaseOffer> invalidOffers = new ArrayList<>();
 
     private final String USER_AGENT = "Mozilla/5.0";
+
     private final List<BaseOffer> offers = new ArrayList<>();
     private final List<BaseVehicle> vehicles = new ArrayList<>();
     private int maxOffersLimit = -1;
@@ -179,5 +180,9 @@ public abstract class AbstractScrapper {
 
     public void setMaxOffersLimit(int maxOffersLimit) {
         this.maxOffersLimit = maxOffersLimit;
+    }
+
+    public List<BaseOffer> getOffers() {
+        return offers;
     }
 }
