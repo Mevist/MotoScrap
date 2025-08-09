@@ -21,6 +21,7 @@ public class AutoScoutScrapper extends AbstractScrapper {
             Map.entry("VehicleDetails-speedometer", "speedoMeter"));
 
     public static final String DETAIL_FIELD_IDENTIFIER = "data-testid";
+    public static final String ID_FIELD_HOLDER = "data-guid";
 
     public AutoScoutScrapper(AutoScoutSearch search, AutoScoutVehicleMapper  vehicleMapper, AutoScoutPriceMapper priceMapper) {
         super(search);
@@ -40,11 +41,12 @@ public class AutoScoutScrapper extends AbstractScrapper {
     @Override
     protected BaseOffer parseOffer(Element article) {
         String link = findRawLink(article);
+        String guid = findGUID(article);
         String rawPrice = findRawPrice(article);
 
         Price price = priceMapper.toPrice(rawPrice);
 
-        return new BaseOffer(AutoScoutSearch.URL + link, price);
+        return new BaseOffer(AutoScoutSearch.URL + link, guid, price);
     }
 
     @Override
@@ -100,6 +102,10 @@ public class AutoScoutScrapper extends AbstractScrapper {
     private String findRawLink(Element article) {
         Element hRefElement = article.selectFirst("a[hRef]");
         return hRefElement.attribute("href").getValue();
+    }
+
+    private String findGUID(Element article) {
+        return article.attributes().get(ID_FIELD_HOLDER);
     }
 
     private String findRawPrice(Element article) {

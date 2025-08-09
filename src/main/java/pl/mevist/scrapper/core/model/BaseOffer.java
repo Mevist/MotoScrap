@@ -2,6 +2,7 @@ package pl.mevist.scrapper.core.model;
 
 public class BaseOffer {
     private String url;
+    private String id;
     private Price price;
     private BaseVehicle vehicle;
 
@@ -10,8 +11,9 @@ public class BaseOffer {
     }
 
     // Constructor
-    public BaseOffer(String url, Price price) {
+    public BaseOffer(String url, String id, Price price) {
         this.url = url;
+        this.id = id;
         this.price = price;
     }
 
@@ -33,6 +35,14 @@ public class BaseOffer {
         this.price = price;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public BaseVehicle getVehicle() {
         return vehicle;
     }
@@ -46,6 +56,7 @@ public class BaseOffer {
         return "BaseOffer{" +
                 "url='" + url +
                 ", price=" + price +
+                ", id='" + id +
                 ", vehicle=" + vehicle +
                 '}';
     }
