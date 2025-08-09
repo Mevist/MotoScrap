@@ -23,10 +23,17 @@ public class AutoScoutScrapper extends AbstractScrapper {
     public static final String DETAIL_FIELD_IDENTIFIER = "data-testid";
     public static final String ID_FIELD_HOLDER = "data-guid";
 
-    public AutoScoutScrapper(AutoScoutSearch search, AutoScoutVehicleMapper  vehicleMapper, AutoScoutPriceMapper priceMapper) {
+    public AutoScoutScrapper(AutoScoutSearch search) {
         super(search);
-        this.vehicleMapper = vehicleMapper;
-        this.priceMapper = priceMapper;
+        AutoScoutVehicleMapper autoScoutVehicleMapper = new AutoScoutVehicleMapper();
+        AutoScoutPriceMapper autoScoutPriceMapper = new AutoScoutPriceMapper();
+        this.vehicleMapper = autoScoutVehicleMapper;
+        this.priceMapper = autoScoutPriceMapper;
+    }
+
+    public AutoScoutScrapper(AutoScoutSearch search, int maxOfferLimit) {
+        this(search);
+        this.setMaxOffersLimit(maxOfferLimit);
     }
 
     @Override

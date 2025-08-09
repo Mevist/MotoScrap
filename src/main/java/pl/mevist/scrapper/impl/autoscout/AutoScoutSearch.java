@@ -11,21 +11,21 @@ public class AutoScoutSearch extends AbstractSearch {
 
     public AutoScoutSearch(BaseSearchData baseSearchData) {
         super(baseSearchData);
-        BaseSearchData searchData = this.getBaseSearch();
     }
 
     @Override
     protected String buildSearchUrl(int page) {
-        StringBuilder url = new StringBuilder(URL).append("/lst/").append("?page=").append(page);
-        return this.buildUrlParams(url);
+        StringBuilder url = new StringBuilder(URL).append("/lst/");
+        return buildUrlParams(url, page);
     }
 
     @Override
-    protected String buildUrlParams(StringBuilder url){
+    protected String buildUrlParams(StringBuilder url, int page){
         BaseSearchData searchData = getBaseSearch();
 
         Optional.ofNullable(searchData.getBrand()).ifPresent(brand -> url.append(brand).append('/'));
         Optional.ofNullable(searchData.getModel()).ifPresent(model -> url.append(model).append('/'));
+        url.append("?page=").append(page);
         return url.toString();
     }
 }

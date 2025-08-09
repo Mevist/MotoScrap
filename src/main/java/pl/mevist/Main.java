@@ -15,13 +15,7 @@ public class Main{
                 .build();
 
         AutoScoutSearch autoScoutSearch = new AutoScoutSearch(search);
-        AutoScoutVehicleMapper autoScoutVehicleMapper = new AutoScoutVehicleMapper();
-        AutoScoutPriceMapper autoScoutPriceMapper = new AutoScoutPriceMapper();
-
-        AutoScoutScrapper autoScoutScrapper = new AutoScoutScrapper(
-                autoScoutSearch,
-                autoScoutVehicleMapper,
-                autoScoutPriceMapper);
+        AutoScoutScrapper autoScoutScrapper = new AutoScoutScrapper(autoScoutSearch);
 
         CarFinder test = new CarFinder(List.of(autoScoutScrapper));
         try {

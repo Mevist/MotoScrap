@@ -25,6 +25,8 @@ public abstract class AbstractScrapper {
     private final String USER_AGENT = "Mozilla/5.0";
     private final List<BaseOffer> offers = new ArrayList<>();
     private final List<BaseVehicle> vehicles = new ArrayList<>();
+    private int maxOffersLimit = -1;
+    private final int globalCount = 0;
 
 
     // Abstract
@@ -52,55 +54,74 @@ public abstract class AbstractScrapper {
         return vehicle;
     }
 
-    public final void processAll(){
+    public final void processAll() {
         try {
-            Document document = getFirstDocumentPage();
-            search.setMaxPage(findMaxPageIndex(document));
+            Document first = getFirstDocumentPage();
+            search.setMaxPage(findMaxPageIndex(first));
+            int max = search.getMaxPage();
 
-            for(int page = 1; page <= search.getMaxPage(); page++){
+            logger.info("Starting scrape: up to {} pages, limit {} offers", max, maxOffersLimit);
+
+            for (int page = 1; page <= max; page++) {
+                if (maxOffersLimit > 0 && offers.size() >= maxOffersLimit) {
+                    logger.info("Offer limit {} reached before page {}", maxOffersLimit, page);
+                    break;
+                }
                 search.setPage(page);
-                processPage(search.getPage());
+                boolean limitReached = processPage(page);
+
+                if (limitReached) {
+                    logger.info("Offer limit {} reached on page {}", maxOffersLimit, page);
+                    break;
+                }
             }
 
-            logger.debug("Found {} offers after processing {} pages", offers.size(), search.getMaxPage());
+            logger.info("Found {} offers after processing {} pages", offers.size(), search.getPage());
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             failedVehicleParsingLogging();
             invalidOfferParsingLogging();
         }
     }
 
-    public final void processPage(int page) {
+    public final boolean processPage(int page) {
         try {
             Document document = getBaseDocument(page);
             Elements elements = getElementsInPage(document);
 
-            logger.debug(String.valueOf(elements.size()));
-            Integer count = 1;
-            for (Element element : elements) {
-                logger.debug("Processing element: " + count + "/" + elements.size());
+            logger.debug("Page {}: {} elements to process", page, elements.size());
 
-                //TODO
-                // refactor this part so that there will be provided link in case of error
-                BaseOffer offer = parseOffer(element);
-                logger.debug(offer.toString());
-                BaseVehicle vehicle = parseVehicle(element);
+            int count = 0;
+            for (Element el : elements) {
+                // Early-stop guard
+                if (maxOffersLimit > 0 && offers.size() >= maxOffersLimit) {
+                    return true; // limit reached
+                }
 
+                count++;
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Processing element {}/{} on page {}", count, elements.size(), page);
+                }
+
+                BaseOffer offer = parseOffer(el);
+                BaseVehicle vehicle = parseVehicle(el);
                 offer.setVehicle(vehicle);
 
-                logger.debug(vehicle.toString());
-                logger.debug("End of processing element: {}/{}", count, elements.size());
                 if (offer.isValid()) {
                     offers.add(offer);
-                }else{
+                } else {
                     invalidOffers.add(offer);
                 }
-                count++;
+
+                // Optional: throttle verbose progress logs
+                if (logger.isDebugEnabled() && (count % 50 == 0 || count == elements.size())) {
+                    logger.debug("Processed {}/{} elements on page {}", count, elements.size(), page);
+                }
             }
 
             saveIntoFile();
-
+            return false; // limit not reached
         } catch (IOException e) {
             throw new RuntimeException("Scraping failed", e);
         }
@@ -148,5 +169,15 @@ public abstract class AbstractScrapper {
     // Constructors
     public AbstractScrapper(AbstractSearch search) {
         this.search = search;
+    }
+
+
+    // Getters, Setters
+    public int getMaxOffersLimit() {
+        return maxOffersLimit;
+    }
+
+    public void setMaxOffersLimit(int maxOffersLimit) {
+        this.maxOffersLimit = maxOffersLimit;
     }
 }

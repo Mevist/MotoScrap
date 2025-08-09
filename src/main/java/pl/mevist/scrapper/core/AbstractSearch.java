@@ -4,14 +4,14 @@ package pl.mevist.scrapper.core;
 import pl.mevist.scrapper.core.model.BaseSearchData;
 
 public abstract class AbstractSearch {
-    private final BaseSearchData baseSearchData;
+    protected final BaseSearchData baseSearchData;
 
     private int maxPage;
     private int page;
 
     // Abstract
     protected abstract String buildSearchUrl(int page);
-    protected abstract String buildUrlParams(StringBuilder baseUrl);
+    protected abstract String buildUrlParams(StringBuilder baseUrl, int page);
 
     // Constructor
     public AbstractSearch(BaseSearchData baseSearchData) {
